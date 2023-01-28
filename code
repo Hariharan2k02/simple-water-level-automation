@@ -1,0 +1,102 @@
+#include <REGX52.h>
+  #define msec 50
+
+  sbit rs=P3^0;
+  sbit rw=P3^1;
+  sbit en=P3^6;
+  
+  sbit high=P0^1;
+  sbit relay=P0^7;
+  
+
+  unsigned char commands[]={0x38,0x0E,0x01,0x06,0x81,'\0'};
+   
+   unsigned char name1[]={"Level:High"};
+   unsigned char name2[]={"Level:Low"};
+   unsigned char name3[]={"Motor:On"};
+   unsigned char name4[]={"Motor:Off"};
+   
+
+	void delay(unsigned int time)
+{
+ unsigned int i,j;
+ for(i=0;i<time;i++)
+ for(j=0;j<1250;j++);
+}
+
+  
+void lcdcmd(unsigned char val)
+{
+ P1 = val;
+ rs = 0;
+ rw = 0;
+ en = 1;
+ delay(1);
+ en = 0;
+  }
+
+   void display(int val)
+ {
+  P1 = val;
+  rs = 1;
+  rw = 0;
+  en = 1;
+  delay(1);
+  en = 0;
+ }
+
+ 
+	void main()
+{
+ int i,j;
+	for(i=0;commands[i]!='\0';i++)
+		{
+	lcdcmd(commands[i]);
+	delay(msec);}
+
+
+if(high==1)
+{
+	relay=0;
+	
+	for(j=0;j<=10;j++)
+  {
+   display(name1[j]);
+  }
+	
+	delay(msec);
+	 lcdcmd(0xc1);	
+	delay(msec);
+	delay(msec);
+
+	for(j=0;j<=9;j++)
+  {
+   display(name4[j]);
+  }  
+
+  delay(msec);
+}
+
+else 
+{
+	relay=1;
+
+	for(j=0;j<=9;j++)
+  {
+   display(name2[j]);
+  }  
+	
+	delay(msec);
+	 lcdcmd(0xc1);	
+	delay(msec);
+	delay(msec);
+
+	for(j=0;j<=8;j++)
+  {
+   display(name3[j]);
+  }
+
+  delay(msec);
+}
+
+}
